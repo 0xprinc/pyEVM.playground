@@ -782,7 +782,7 @@ def evm(code, info):
 
 def test():
     script_dirname = os.path.dirname(os.path.abspath(__file__))
-    json_file = os.path.join(script_dirname, "..", "test", "me.json")
+    json_file = os.path.join(script_dirname, "..", "input", "input.json")
     with open(json_file) as f:
         data = json.load(f)
         total = len(data)
