@@ -72,13 +72,13 @@ class Storage:
         self.data[slot] = value
 
     def represent(self):
-
-        print("-+-+-+-+-+-+-+-+-+-+")
-        print("STORAGE")
-        for a, b in enumerate(self.data):
-            print("|",end=" ")
-            print(a, ":", b)
-        print("-+-+-+-+-+-+-+-+-+-+")
+        if self.data != dict():
+            print("-+-+-+-+-+-+-+-+-+-+")
+            print("STORAGE")
+            for a, b in enumerate(self.data):
+                print("|",end=" ")
+                print(a, ":", b)
+            print("-+-+-+-+-+-+-+-+-+-+")
 
 # a bytearray() with some functionalities
 class Memory:
@@ -114,11 +114,12 @@ class Memory:
         return a
     
     def represent(self):
-        print("-+-+-+-+-+-+-+-+-+-+", flush = True)
-        print("MEMORY", flush = True)
-        print("|", end = " ", flush = True)
-        print(self.array.hex(), flush = True)       # made flush
-        print("-+-+-+-+-+-+-+-+-+-+", flush = True)
+        if self.array != bytearray():
+            print("-+-+-+-+-+-+-+-+-+-+", flush = True)
+            print("MEMORY", flush = True)
+            print("|", end = " ", flush = True)
+            print(self.array.hex(), flush = True)       # made flush
+            print("-+-+-+-+-+-+-+-+-+-+", flush = True)
 
 
 # stack of max size 1024
@@ -143,12 +144,13 @@ class Stack:
         self.list[index] = item
 
     def represent(self):
-        print("+-+-+-+-+-+-+-+")
-        print("STACK")
-        for item in reversed(self.list):
-            print("|", end = " ", flush = True)
-            print(item, end ="\n", flush = True)
-        print("+-+-+-+-+-+-+-+", flush = True)
+        if self.list != []:
+            print("+-+-+-+-+-+-+-+")
+            print("STACK")
+            for item in reversed(self.list):
+                print("|", end = " ", flush = True)
+                print(item, end ="\n", flush = True)
+            print("+-+-+-+-+-+-+-+", flush = True)
 
 # same as memory, are in bytes
 class Calldata:
@@ -197,11 +199,12 @@ class Returndata:
         return a
     
     def represent(self):
-        print("-+-+-+-+-+-+-+-+-+-+", flush = True)
-        print("RETURNDATA", flush = True)
-        print("|", end = " ", flush = True)
-        print(self.data.hex(), flush = True)       # made flush
-        print("-+-+-+-+-+-+-+-+-+-+", flush = True)
+        if self.data != bytes():
+            print("-+-+-+-+-+-+-+-+-+-+", flush = True)
+            print("RETURNDATA", flush = True)
+            print("|", end = " ", flush = True)
+            print(self.data.hex(), flush = True)       # made flush
+            print("-+-+-+-+-+-+-+-+-+-+", flush = True)
 
 # new environment created for every external call
 class Context:
