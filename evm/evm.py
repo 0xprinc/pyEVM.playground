@@ -9,11 +9,18 @@ from lib import unsigned_to_signed, signed_to_unsigned
 from lib import UINT256MAX, STATICCALL_DISALLOWED_OPCODES
 
 import keyboard
-def wait_for_up_key():
+def next_iteration():
     while True:
         event = keyboard.read_event(suppress=True)
-        if event.event_type == keyboard.KEY_DOWN and event.name == "up":
+        if event.event_type == keyboard.KEY_DOWN and event.name == "right":
             break
+
+def highlight(string, index):
+    highlighted_character = string[2*index]+string[2*index+1]
+    highlighted_character = f"\033[46m{highlighted_character}"
+    highlighted_character += "\033[0m"
+    highlighted_string = string[:2*index] + highlighted_character + string[2*index + 2:]
+    return highlighted_string
 
 class txn:
     def __init__(self, code, calldata = bytes(), value = 0):
@@ -692,7 +699,7 @@ def hello():
     opcode[0x5a] = OpcodeData(0x5a, "GAS", opcodeGas)
     opcode[0x56] = OpcodeData(0x56, "JUMP", opcodeJump)
     opcode[0x57] = OpcodeData(0x57, "JUMPI", opcodeJumpIf)
-    opcode[0x5b] = OpcodeData(0x57, "JUMPDEST", opcodeJumpDest)
+    opcode[0x5b] = OpcodeData(0x5b, "JUMPDEST", opcodeJumpDest)
     opcode[0x51] = OpcodeData(0x51, "MLOAD", opcodeMLoad)
     opcode[0x52] = OpcodeData(0x52, "MSTORE", opcodeMStore)
     opcode[0x53] = OpcodeData(0x53, "MSTORE8", opcodeMStore8)
@@ -751,10 +758,10 @@ def evm(code, info):
             if op in STATICCALL_DISALLOWED_OPCODES:
                 opcodeReturn.success = False
                 break
-        opcodeObj = opcode.get(op)
+        opcodeObj = opcode.get(op)  # means opcode is present
         if opcodeObj:
-            print(
-                f'\033[0;39m {hex(opcodeObj.opcode)} {opcodeObj.name}', end= "\n", flush = True)
+            print(context.pc,end = "\n")
+            print(highlight(str(code.hex()), context.pc), end = "\n", flush = True)
 
             if opcodeObj.numericPartOfName is None:
                 opcodeReturn = opcodeObj.run(context, info)
@@ -773,16 +780,16 @@ def evm(code, info):
         context.storage.represent()
         context.returndata.represent()
         context.pc += 1
-        wait_for_up_key()
+        next_iteration()
     logs = context.logs
     if not opcodeReturn.success:
-        return logs
-    return logs
+        return (logs)
+    return (logs)
 
 
 def test():
     script_dirname = os.path.dirname(os.path.abspath(__file__))
-    json_file = os.path.join(script_dirname, "..", "input", "input.json")
+    json_file = os.path.join(script_dirname, "..", "test", "me.json")
     with open(json_file) as f:
         data = json.load(f)
         total = len(data)
