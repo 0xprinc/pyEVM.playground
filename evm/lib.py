@@ -73,12 +73,12 @@ class Storage:
 
     def represent(self):
         if self.data != dict():
-            print("-+-+-+-+-+-+-+-+-+-+")
+            # print("-+-+-+-+-+-+-+-+-+-+")
             print("STORAGE")
             for a, b in enumerate(self.data):
                 print("|",end=" ")
                 print(a, ":", b)
-            print("-+-+-+-+-+-+-+-+-+-+")
+            # print("-+-+-+-+-+-+-+-+-+-+")
 
 # a bytearray() with some functionalities
 class Memory:
@@ -115,11 +115,11 @@ class Memory:
     
     def represent(self):
         if self.array != bytearray():
-            print("-+-+-+-+-+-+-+-+-+-+", flush = True)
+            # print("-+-+-+-+-+-+-+-+-+-+", flush = True)
             print("MEMORY", flush = True)
             print("|", end = " ", flush = True)
             print(self.array.hex(), flush = True)       # made flush
-            print("-+-+-+-+-+-+-+-+-+-+", flush = True)
+            # print("-+-+-+-+-+-+-+-+-+-+", flush = True)
 
 
 # stack of max size 1024
@@ -145,12 +145,12 @@ class Stack:
 
     def represent(self):
         if self.list != []:
-            print("+-+-+-+-+-+-+-+")
+            # print("+-+-+-+-+-+-+-+")
             print("STACK")
             for item in reversed(self.list):
                 print("|", end = " ", flush = True)
                 print(item, end ="\n", flush = True)
-            print("+-+-+-+-+-+-+-+", flush = True)
+            # print("+-+-+-+-+-+-+-+", flush = True)
 
 # same as memory, are in bytes
 class Calldata:
@@ -200,11 +200,11 @@ class Returndata:
     
     def represent(self):
         if self.data != bytes():
-            print("-+-+-+-+-+-+-+-+-+-+", flush = True)
+            # print("-+-+-+-+-+-+-+-+-+-+", flush = True)
             print("RETURNDATA", flush = True)
             print("|", end = " ", flush = True)
             print(self.data.hex(), flush = True)       # made flush
-            print("-+-+-+-+-+-+-+-+-+-+", flush = True)
+            # print("-+-+-+-+-+-+-+-+-+-+", flush = True)
 
 # new environment created for every external call
 class Context:
