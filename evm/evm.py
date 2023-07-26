@@ -8,12 +8,12 @@ from lib import Account, ethereum, Context, OpcodeResponse, OpcodeData, Stack, M
 from lib import unsigned_to_signed, signed_to_unsigned
 from lib import UINT256MAX, STATICCALL_DISALLOWED_OPCODES
 
-import keyboard
-def next_iteration():
-    while True:
-        event = keyboard.read_event(suppress=True)
-        if event.event_type == keyboard.KEY_DOWN and event.name == "right":
-            break
+# import keyboard
+# def next_iteration():
+#     while True:
+#         event = keyboard.read_event(suppress=True)
+#         if event.event_type == keyboard.KEY_DOWN and event.name == "right":
+#             break
 
 def highlight(string, index):
     highlighted_character = string[2*index]+string[2*index+1]
@@ -22,9 +22,18 @@ def highlight(string, index):
     highlighted_string = string[:2*index] + highlighted_character + string[2*index + 2:]
     return highlighted_string
 
-class txn:
-    def __init__(self, code, calldata = bytes(), value = 0):
-        return
+def get_char():
+    # Set the terminal in raw mode
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(sys.stdin.fileno())
+        # Read a single character from stdin
+        ch = sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return ch
+
 
 def opcodeStop(context, info):
     return OpcodeResponse(success=True, encounteredStop=True,returnData=None)
@@ -423,11 +432,14 @@ def opcodeReturn(context, info):
     a = context.stack.pop()
     b = context.stack.pop()
     c = int(context.memory.load(a, b).hex(), 16)
+    d = context.memory.load(a, b)
+    context.returndata.data = d
     return OpcodeResponse(success=True, encounteredStop=False,returnData=c)
 def opcodeRevert(context, info):
     a = context.stack.pop()
     b = context.stack.pop()
     c = int(context.memory.load(a, b).hex(), 16)
+    d = context.memory.load(a, b)
     return OpcodeResponse(success=False, encounteredStop=False,returnData=c)
 def opcodeCall(context, info):
     gas = context.stack.pop()
@@ -747,11 +759,11 @@ def hello():
 hello()
 
 def evm(code, info):
-    opcodeReturn = OpcodeResponse(True, False, None)
     calldata = bytes()
     context = Context(world_state=ethereum(), code=code, calldata = calldata)
 
     while context.pc < len(code):
+        opcodeReturn = OpcodeResponse(True, False, None)
         op = code[context.pc]
         if info["isStaticCall"]:
             info["isStaticCall"] = True
@@ -760,7 +772,6 @@ def evm(code, info):
                 break
         opcodeObj = opcode.get(op)  # means opcode is present
         if opcodeObj:
-            print(context.pc,end = "\n")
             print(highlight(str(code.hex()), context.pc), end = "\n", flush = True)
 
             if opcodeObj.numericPartOfName is None:
@@ -778,13 +789,13 @@ def evm(code, info):
         context.stack.represent()
         context.memory.represent()
         context.storage.represent()
-        context.returndata.represent()
+        print("++++++++++")
         context.pc += 1
-        next_iteration()
     logs = context.logs
+    context.returndata.represent()
     if not opcodeReturn.success:
-        return (logs)
-    return (logs)
+        return (opcodeReturn.success, logs, context.returndata, ethereum)
+    return (opcodeReturn.success, logs, context.returndata, ethereum)
 
 
 def test():
